@@ -1,0 +1,89 @@
+services:
+  registry-discovery:
+    container_name: id-eureka
+    image: paymentchain/microservice-docker-eurekaserver:0.0.1-SNAPSHOT
+    ports:
+      - 8761:8761
+    environment:
+      - JAVA_OPTS=
+          -Xms256M
+          -Xmx256M
+
+  product-catalog:
+    container_name: bd-product-catalog
+    image: paymentchain/microservice-docker-product:0.0.1-SNAPSHOT
+    ports:
+      - 8083:8083
+    environment:
+      - JAVA_OPTS=
+          -Xms256M
+          -Xmx256M
+          -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
+    depends_on:
+      - registry-discovery
+
+  customer:
+    container_name: bd-customer
+    image: paymentchain/microservice-docker-customer:0.0.1-SNAPSHOT
+    environment:
+      - JAVA_OPTS=
+        -Xms256M
+        -Xmx256M
+        -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
+    depends_on:
+      - registry-discovery
+
+  apigateway:
+    container_name: id-apigateway
+    image: paymentchain/microservice-docker-apigateway:0.0.1-SNAPSHOT
+    ports:
+      - 8080:8080
+    environment:
+      - JAVA_OPTS=
+          -Xms256M
+          -Xmx256M
+          -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
+    depends_on:
+      - registry-discovery
+
+
+  postgres_db:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - ./dbfiles:/docker-entrypoint-initdb.d
+      - ./postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
+
+  keycloak_server:
+    container_name: id-keycloakServer
+    image: quay.io/keycloak/keycloak:25.0.1
+    restart: always
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB_VENDOR: H2
+    ports:
+      - 8091:8080
+    command: start-dev
+
+  keycloak:
+    container_name: keycloakAdapter
+    image: paymentchain/microservice-docker-keycloak-adapter:0.0.1-SNAPSHOT
+    #All projects will have a variable value DEUREKA_SERVER this tell where find a registry-discovery server
+    environment:
+      - JAVA_OPTS=
+         -Xms256M
+         -Xmx256M
+         -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
+         -DKEYCLOAK_SERVER=http://keycloak_server:8080/realms/
+         -DKEYCLOAK_REAL_ID=z3c_MVwl9dvu0B-CltFyK1r5lka3mqWqwlKQq4XtinU
+    depends_on:
+      - registry-discovery
+    ports:
+      - 8888:8888
