@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/businessdomain/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/infraestucturedomain/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="apigateway" />
+        <module name="keycloak-adapter" />
+        <module name="product" />
+        <module name="configserver" />
+        <module name="transactions" />
+        <module name="eurekaServer" />
+        <module name="customer" />
+        <module name="springBootAdmin" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="apigateway" options="" />
+      <module name="configserver" options="" />
+      <module name="customer" options="" />
+      <module name="eurekaServer" options="" />
+      <module name="keycloak-adapter" options="" />
+      <module name="product" options="" />
+      <module name="springBootAdmin" options="" />
+      <module name="transactions" options="" />
+    </option>
+  </component>
+</project>
