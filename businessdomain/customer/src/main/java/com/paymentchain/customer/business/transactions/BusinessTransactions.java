@@ -122,6 +122,9 @@ public class BusinessTransactions {
 
     public Customer getByCodeOfServiceExtern(String code) {
         Customer customer = customerRepository.findByCode(code);
+        if(customer == null){
+            throw new RuntimeException("Cliente no encontrado");
+        }
         System.out.println("CUSTOMER------" + customer);
         List<CustomerProduct> products = customer.getProducts();
         //for each product find it name

@@ -19,19 +19,28 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebClientConfig {
 
+    /**
+     *
+     * Esto es útil si quieres que cada clase cree su propio WebClient, pero partiendo de una configuración común.
+     */
+
     @Bean
     @LoadBalanced
     public WebClient.Builder webClientBuilder(){
         HttpClient client = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,5000)
                 .option(ChannelOption.SO_KEEPALIVE,true)
-                .option(EpollChannelOption.TCP_KEEPIDLE,300)
-                .option(EpollChannelOption.TCP_KEEPIDLE,60)
                 .responseTimeout(Duration.ofSeconds(1))
                 .doOnConnected(connection -> {
                     connection.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS));
                     connection.addHandlerLast(new WriteTimeoutHandler(5000,TimeUnit.MILLISECONDS));
                 });
+
+        String osName =  System.getProperty("os.name").toLowerCase();
+        if(osName.contains("linux")){
+            client = client.option(EpollChannelOption.TCP_KEEPIDLE,300);
+            client = client.option(EpollChannelOption.TCP_KEEPINTVL,60);
+        }
 
         return WebClient.builder()
                 //.baseUrl("http://localhost:8083/")//define la url base
