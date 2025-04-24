@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -16,9 +17,10 @@ import java.util.List;
  *
  * @author sotobotero
  */
-@Data
+@Data//genera getters and setters
 @Entity
 @NoArgsConstructor
+@ToString(exclude = "products")  // ⬅️ evita la lista infinita
 public class Customer {
    
    @GeneratedValue(strategy = GenerationType.AUTO)  
@@ -32,7 +34,7 @@ public class Customer {
    private String address;
    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
    private List<CustomerProduct> products;
-   @Transient
+   @Transient//No se guarda en la base de datos
    private List<?> transactions;
 
 }

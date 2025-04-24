@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 /**
  *
- * @author sotobotero
+ * @author kosmosteconologia
  */
 @Data
 @Entity
